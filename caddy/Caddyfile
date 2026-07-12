@@ -1,0 +1,13 @@
+# Domain comes from the DOMAIN env var (see .env / .env.example).
+# Until DOMAIN is purchased and its DNS points at this droplet, Caddy will keep
+# retrying ACME and idle — that is expected, not a bug. Do not add self-signed
+# certs or HTTP-only workarounds.
+
+{
+	email {$ACME_EMAIL}
+}
+
+# Uptime Kuma — served once DOMAIN resolves. Pre-domain, reach it via SSH tunnel.
+status.{$DOMAIN} {
+	reverse_proxy uptime-kuma:3001
+}
