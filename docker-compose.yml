@@ -24,10 +24,7 @@ services:
   uptime-kuma:
     image: louislam/uptime-kuma:1.23.16
     restart: unless-stopped
-    # Loopback-only bind: reachable via SSH tunnel, never exposed to the internet.
-    # ssh -L 3001:localhost:3001 arvin@<droplet-ip>  →  http://localhost:3001
-    ports:
-      - "127.0.0.1:3001:3001"   # TODO: remove after Caddy route exists
+    # No published ports — reached only via Caddy on the internal network.
     volumes:
       - uptime_kuma_data:/app/data
     networks:

@@ -22,17 +22,10 @@ docker compose ps         # status
 
 Caddy logs will spam ACME errors until `DOMAIN` resolves to the droplet — that is expected.
 
-## Uptime Kuma (pre-domain access)
+## Uptime Kuma
 
-Uptime Kuma binds to loopback only (`127.0.0.1:3001`), never exposed to the internet.
-Reach it via SSH tunnel from your machine:
-
-```bash
-ssh -L 3001:localhost:3001 arvin@<droplet-ip>
-# then open http://localhost:3001
-```
-
-Once the Caddy route exists, remove the `127.0.0.1:3001:3001` port mapping in `docker-compose.yml`.
+Reachable only through Caddy, at `https://status.<DOMAIN>`. No ports are published
+for it directly — it sits on the internal `infra` network only.
 
 ## Common commands
 
