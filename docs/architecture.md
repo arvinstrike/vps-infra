@@ -32,11 +32,13 @@ Planned next: Langfuse (uses the shared Postgres).
 | Uptime Kuma | 512M   |
 | Postgres    | 1024M  |
 | Qdrant      | 1024M  |
-| TEI         | 3072M  |
-| **Total**   | ~5.75GB |
+| TEI         | 4096M  |
+| **Total**   | ~6.75GB |
 
-TEI (CPU embedding inference) is the heaviest service. Leaves ~2GB headroom for
-Langfuse plus app containers from other repos — watch this budget as more is added.
+TEI (CPU embedding inference) is the heaviest service. Its warmup allocation scales
+with `--max-batch-tokens` (set to 2048 in compose; the 16384 default OOMs on this box).
+Side effect: with `--auto-truncate`, effective max input length is capped to 2048 tokens
+— keep RAG chunks under that. Leaves ~1.25GB headroom — Langfuse will need this revisited.
 
 ## Secrets
 

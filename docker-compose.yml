@@ -74,7 +74,10 @@ services:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9
     restart: unless-stopped
     # No published ports — internal `infra` network only, per hard rule in CLAUDE.md.
-    command: --model-id ${TEI_MODEL:-BAAI/bge-m3} --auto-truncate
+    # ponytail: --max-batch-tokens 2048 caps warmup allocation. Default 16384 tries to
+    # alloc ~8GB for the attention MatMul during warmup and fails on this 8GB box.
+    # Raise it (and the memory limit) if the droplet ever gets more RAM.
+    command: --model-id ${TEI_MODEL:-BAAI/bge-m3} --auto-truncate --max-batch-tokens 2048
     volumes:
       - tei_data:/data
     networks:
@@ -82,7 +85,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3072M
+          memory: 4096M
 
 
 
