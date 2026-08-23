@@ -70,6 +70,21 @@ services:
       resources:
         limits:
           memory: 1024M
+  tei:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9
+    restart: unless-stopped
+    # No published ports — internal `infra` network only, per hard rule in CLAUDE.md.
+    command: --model-id ${TEI_MODEL:-BAAI/bge-m3} --auto-truncate
+    volumes:
+      - tei_data:/data
+    networks:
+      - infra                              
+    deploy:
+      resources:
+        limits:
+          memory: 3072M
+
+
 
 volumes:
   caddy_data:
@@ -77,6 +92,7 @@ volumes:
   uptime_kuma_data:
   postgres_data:
   qdrant_data:
+  tei_data:
 
 networks:
   infra:

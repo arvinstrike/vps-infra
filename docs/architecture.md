@@ -18,8 +18,9 @@ network, never from the public internet.
 | Uptime Kuma | `louislam/uptime-kuma:1.23.16` | `status.<DOMAIN>` via Caddy | Uptime monitoring |
 | Postgres    | `postgres:16.4-alpine`      | none — internal only       | Shared relational DB; one instance, multiple app databases |
 | Qdrant      | `qdrant/qdrant:v1.11.3`     | none — internal only       | Vector DB for `bmn-regulatory-rag`; API-key protected |
+| TEI         | `ghcr.io/huggingface/text-embeddings-inference:cpu-1.9` | none — internal only | Serves `BAAI/bge-m3` embeddings; consumed by `bmn-regulatory-rag` |
 
-Planned next: TEI (bge-m3 embeddings), Langfuse (uses the shared Postgres).
+Planned next: Langfuse (uses the shared Postgres).
 
 ## Memory budget
 
@@ -31,10 +32,11 @@ Planned next: TEI (bge-m3 embeddings), Langfuse (uses the shared Postgres).
 | Uptime Kuma | 512M   |
 | Postgres    | 1024M  |
 | Qdrant      | 1024M  |
-| **Total**   | ~2.75GB |
+| TEI         | 3072M  |
+| **Total**   | ~5.75GB |
 
-Leaves >5GB headroom for TEI (CPU embedding inference is the next heaviest
-service) and Langfuse, plus room for app containers from other repos.
+TEI (CPU embedding inference) is the heaviest service. Leaves ~2GB headroom for
+Langfuse plus app containers from other repos — watch this budget as more is added.
 
 ## Secrets
 
