@@ -5,22 +5,37 @@ Hosts the shared services my other projects connect to. Public repo — also a p
 
 ## Services
 
-| Service     | Role                                  | Public? |
-|-------------|---------------------------------------|---------|
-| Caddy       | Reverse proxy, automatic HTTPS        | 80/443  |
+| Service     | Role                                  | Public?   |
+|-------------|---------------------------------------|-----------|
+| Caddy       | Reverse proxy, automatic HTTPS        | 80/443    |
 | Uptime Kuma | Uptime monitoring                     | via Caddy |
+| Postgres    | Shared relational DB                   | internal  |
+| Qdrant      | Vector DB (embeddings storage)        | internal  |
+| TEI         | `bge-m3` embeddings inference (CPU)   | internal  |
 
-More services (Postgres, Qdrant, TEI, Langfuse) are added in later phases.
+Langfuse is added in a later phase. Internal services publish no ports — they are
+reachable only from the `infra` Docker network. See `docs/architecture.md` for details.
 
 ## Setup
 
 ```bash
-cp .env.example .env      # fill in ACME_EMAIL; leave DOMAIN as placeholder until purchased
-docker compose up -d      # start the stack
+# 1. External network the stack attaches to (create once; "already exists" is fine)
+docker network create infra
+
+# 2. Secrets — copy the template, then generate real values
+cp .env.example .env
+openssl rand -hex 32      # → paste into POSTGRES_PASSWORD
+openssl rand -hex 32      # → paste into QDRANT_API_KEY
+# also set ACME_EMAIL; leave DOMAIN as placeholder until purchased
+
+# 3. Start
+docker compose up -d      # start/update the whole stack
 docker compose ps         # status
 ```
 
-Caddy logs will spam ACME errors until `DOMAIN` resolves to the droplet — that is expected.
+`.env` is per-machine and gitignored — never committed. Each host (laptop, droplet)
+generates its own secrets. Caddy logs will spam ACME errors until `DOMAIN` resolves to
+the droplet — that is expected.
 
 ## Uptime Kuma
 
