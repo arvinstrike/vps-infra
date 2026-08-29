@@ -87,6 +87,27 @@ services:
         limits:
           memory: 4096M
 
+  langfuse:
+    image: langfuse/langfuse:2.84.1
+    restart: unless-stopped
+    # No published ports — reached via Caddy on the internal network.
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/langfuse
+      NEXTAUTH_URL: https://langfuse.${DOMAIN}
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET}
+      SALT: ${LANGFUSE_SALT}
+      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY}
+      TELEMETRY_ENABLED: "true"
+    networks:
+      - infra
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
 
 
 volumes:

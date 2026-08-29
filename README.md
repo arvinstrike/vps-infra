@@ -12,9 +12,10 @@ Hosts the shared services my other projects connect to. Public repo — also a p
 | Postgres    | Shared relational DB                   | internal  |
 | Qdrant      | Vector DB (embeddings storage)        | internal  |
 | TEI         | `bge-m3` embeddings inference (CPU)   | internal  |
+| Langfuse    | LLM observability (self-hosted v2)    | via Caddy |
 
-Langfuse is added in a later phase. Internal services publish no ports — they are
-reachable only from the `infra` Docker network. See `docs/architecture.md` for details.
+Internal services publish no ports — they are reachable only from the `infra` Docker
+network. See `docs/architecture.md` for details.
 
 ## Setup
 

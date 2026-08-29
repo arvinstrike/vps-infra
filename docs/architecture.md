@@ -19,8 +19,9 @@ network, never from the public internet.
 | Postgres    | `postgres:16.4-alpine`      | none — internal only       | Shared relational DB; one instance, multiple app databases |
 | Qdrant      | `qdrant/qdrant:v1.11.3`     | none — internal only       | Vector DB for `bmn-regulatory-rag`; API-key protected |
 | TEI         | `ghcr.io/huggingface/text-embeddings-inference:cpu-1.9` | none — internal only | Serves `BAAI/bge-m3` embeddings; consumed by `bmn-regulatory-rag` |
+| Langfuse    | `langfuse/langfuse:2.84.1`  | `langfuse.<DOMAIN>` via Caddy | Self-hosted LLM observability (v2); uses the shared Postgres (`langfuse` DB) |
 
-Planned next: Langfuse (uses the shared Postgres).
+All shared services are now deployed; further work is backups and CI deploy.
 
 ## Memory budget
 
@@ -33,12 +34,15 @@ Planned next: Langfuse (uses the shared Postgres).
 | Postgres    | 1024M  |
 | Qdrant      | 1024M  |
 | TEI         | 4096M  |
-| **Total**   | ~6.75GB |
+| Langfuse    | 1024M  |
+| **Total**   | ~7.75GB |
 
 TEI (CPU embedding inference) is the heaviest service. Its warmup allocation scales
 with `--max-batch-tokens` (set to 2048 in compose; the 16384 default OOMs on this box).
 Side effect: with `--auto-truncate`, effective max input length is capped to 2048 tokens
-— keep RAG chunks under that. Leaves ~1.25GB headroom — Langfuse will need this revisited.
+— keep RAG chunks under that. Adding Langfuse fills the budget (~7.75GB of 8GB): these are
+caps not reservations (real usage is far lower), but any further service needs the TEI cap
+trimmed or a bigger droplet.
 
 ## Secrets
 
