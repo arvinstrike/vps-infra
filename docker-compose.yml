@@ -101,6 +101,8 @@ services:
       SALT: ${LANGFUSE_SALT}
       ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY}
       TELEMETRY_ENABLED: "true"
+      # Instance is public — lock signups after the owner account is created.
+      AUTH_DISABLE_SIGNUP: "true"
     networks:
       - infra
     deploy:
