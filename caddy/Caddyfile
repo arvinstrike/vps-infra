@@ -11,3 +11,8 @@
 status.{$DOMAIN} {
 	reverse_proxy uptime-kuma:3001
 }
+
+# Langfuse — LLM observability UI.
+langfuse.{$DOMAIN} {
+	reverse_proxy langfuse:3000
+}
